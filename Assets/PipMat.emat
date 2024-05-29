@@ -1,0 +1,4 @@
+MatCommon {
+ AlbedoMap "$rendertarget"
+ DisablePrexposure 1
+}

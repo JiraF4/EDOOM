@@ -1,0 +1,108 @@
+FrameWidgetClass : "{1B5817B718D661B9}UI/layouts/Vehicles/RU_SHARED/PMF_Screen/PMF_Screen.layout" {
+ {
+  FrameWidgetClass "{604F067A41A69CB2}" {
+   Prefab "{604F067A41A69CB2}"
+   {
+    RTTextureWidgetClass "{604EFD6468A29D4F}" {
+     Prefab "{604EFD6468A29D4F}"
+     {
+      OverlayWidgetClass "{605163F635E6315D}" {
+       Prefab "{605163F635E6315D}"
+       {
+        FrameWidgetClass "{6156C76A05F66DAC}" : "{87B9FB9C5D2593F4}UI/DScreen.layout" {
+         Name "DRoot"
+         Slot OverlayWidgetSlot "{6156C76A05F66DBC}" {
+          HorizontalAlign 3
+          VerticalAlign 3
+         }
+         "Is Visible" 0
+         "Ignore Cursor" 0
+         components {
+          PS_TouchScreenDPMFHandler "{6156C76B77A6F624}" {
+          }
+         }
+         {
+          ImageWidgetClass "{61551A7415712A4D}" {
+           Prefab "{61551A7415712A4D}"
+           Slot FrameWidgetSlot "{614A2B5EE1D572AD}" {
+            Anchor 0 0 1 1
+            PositionX 0
+            OffsetLeft 0
+            PositionY 0
+            OffsetTop 0
+            SizeX 1920
+            OffsetRight 0
+            SizeY 1200
+            OffsetBottom 0
+           }
+          }
+          CanvasWidgetClass "{614A0271C5016EA4}" {
+           Prefab "{614A0271C5016EA4}"
+           Slot FrameWidgetSlot "{614A0271C5016EBC}" {
+            Anchor 0 0 1 1
+            PositionX 0
+            OffsetLeft 0
+            PositionY 0
+            OffsetTop 0
+            SizeX 1920
+            OffsetRight 0
+            SizeY 1200
+            OffsetBottom 0
+           }
+          }
+         }
+        }
+        FrameWidgetClass "{605163F37EE29EF3}" {
+         Prefab "{605163F37EE29EF3}"
+         {
+          OverlayWidgetClass "{605163F328B02528}" {
+           Prefab "{605163F328B02528}"
+           {
+            UniformGridLayoutWidgetClass "{605163F416E7B90E}" {
+             Prefab "{605163F416E7B90E}"
+             {
+              OverlayWidgetClass "{6156C76A99703E26}" : "{881EFE123D4BBA90}UI/layouts/Vehicles/RU_SHARED/PMF_Screen/PMFWidgets/PMFTouchScreenButtonDrongOS.layout" {
+               Name "ButtonD"
+               Slot UniformGridWidgetSlot "{6156C76A99703E01}" {
+                Row 1
+                Column 1
+               }
+               components {
+                RHS_TouchScreenButtonPMFHandler "{605163DA5A0FEBA7}" {
+                 m_sMenuName "icon"
+                }
+               }
+               {
+                OverlayWidgetClass "{605163F53BE3C0F3}" {
+                 Prefab "{605163F53BE3C0F3}"
+                 {
+                  TextWidgetClass "{605163F54C61C86E}" {
+                   Prefab "{605163F54C61C86E}"
+                   Text "DOOM.exe"
+                  }
+                 }
+                }
+               }
+              }
+             }
+            }
+           }
+          }
+         }
+        }
+        OverlayWidgetClass "{6051639C187A824D}" {
+         Prefab "{6051639C187A824D}"
+         "Is Visible" 0
+        }
+        OverlayWidgetClass "{606F20D35677D623}" {
+         Prefab "{606F20D35677D623}"
+         "Is Visible" 0
+        }
+       }
+      }
+     }
+    }
+   }
+  }
+ }
+}

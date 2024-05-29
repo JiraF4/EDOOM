@@ -1,0 +1,8 @@
+GenericEntity {
+ ID "6146BDC9EFB5A527"
+ components {
+  MeshObject "{60ED4408DC447A4A}" {
+  }
+ }
+ coords 149.745 1.088 99.945
+}

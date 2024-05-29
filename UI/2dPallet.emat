@@ -1,0 +1,16 @@
+MatCommon {
+ ZEnable 0
+ ZWrite 0
+ Sort overall
+ CastShadow 0
+ ReceiveShadow 0
+ OccludeRain 0
+ OccludeWetness 0
+ DisableFog 1
+ NoDecals 1
+ CrossFade 0
+ DisableUserAphaInShadow 1
+ AlbedoMap "{E41A48C764BF92F4}UI/2dPallet.edds" clampu clampv nofilter noresize
+ DisableVertexColor 1
+ DisablePrexposure 1
+}

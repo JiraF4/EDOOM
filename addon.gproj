@@ -1,0 +1,9 @@
+GameProject {
+ ID "EDOOM"
+ GUID "60ED3E7BC993028E"
+ TITLE "EDOOM"
+ TITLE "EDOOM"
+ Dependencies {
+  "58D0FB3206B6F859"
+ }
+}

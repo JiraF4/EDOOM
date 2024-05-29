@@ -1,0 +1,32 @@
+FrameWidgetClass {
+ Name "DRoot"
+ {
+  ImageWidgetClass "{61551A7415712A4D}" {
+   Name "EddsCanvas"
+   Slot FrameWidgetSlot "{614A2B5EE1D572AD}" {
+    PositionX 0
+    OffsetLeft 0
+    PositionY 0
+    OffsetTop 0
+    SizeX 1920
+    OffsetRight -1920
+    SizeY 1200
+    OffsetBottom -1200
+   }
+   Filter 0
+  }
+  CanvasWidgetClass "{614A0271C5016EA4}" {
+   Name "2DCanvas"
+   Slot FrameWidgetSlot "{614A0271C5016EBC}" {
+    PositionX 0
+    OffsetLeft 0
+    PositionY 0
+    OffsetTop 0
+    SizeX 1920
+    OffsetRight -1920
+    SizeY 1200
+    OffsetBottom -1200
+   }
+  }
+ }
+}
