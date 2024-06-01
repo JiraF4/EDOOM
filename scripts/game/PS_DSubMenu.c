@@ -116,12 +116,87 @@ class PS_DSkillSubMenu : PS_DSubMenu
 		m_DMain.m_iDifficulty = m_iCurrentMenuItem - 1;
 		
 		m_DMain.ResetPlayer();
-		m_DMain.BufferSave();
+		m_DMain.MeltScreen();
 		m_DMain.m_iCurrentLevel = 0;
 		m_DMain.LoadLevel("E1M1");
 		PS_DMusicEffect.Play("E1M1", 0);
 		m_DMain.m_CurrentGameState = PS_DGameState.GS_LEVEL;
 		return;
+	}
+}
+
+
+class PS_DOptionsSubMenu : PS_DSubMenu
+{
+	ref array<ref PS_DOption> m_aOptionsList = {};
+	
+	override void Activate()
+	{
+		m_aOptionsList[m_iCurrentMenuItem].Activate();
+	}
+	
+	override void Draw()
+	{
+		PS_DAssets assets = PS_DMain.s_DMain.m_DWAD.m_DAssets;
+		int y = 16;
+		int i = 0;
+		foreach (PS_DOption option : m_aOptionsList)
+		{
+			if (m_iCurrentMenuItem == i)
+			{
+				assets.FillBox(166, y, 138, 8, Color.ORANGE);
+			}
+			assets.DrawText(167, y + 1, option.GetName(), 0);
+			y += 8;
+			i++;
+		}
+	}
+	
+	override void UpdateDirection(int direction)
+	{
+		m_iCurrentMenuItem -= direction;
+		PS_DSoundEffect.PlaySound(PS_EDSoundFX.sfx_pstop, "0 0 0");
+		if (m_iCurrentMenuItem < 0)
+			m_iCurrentMenuItem = m_aOptionsList.Count();
+		if (m_iCurrentMenuItem > m_aOptionsList.Count())
+			m_iCurrentMenuItem = 0;
+	}
+	
+	void PS_DOptionsSubMenu(PS_DMainMenu dMainMenu, PS_DMain dMain)
+	{
+		m_aOptionsList.Insert(new PS_DOptionEddsMode("Edds draw mode"));
+	}
+}
+
+class PS_DOption
+{
+	string m_sName;
+	
+	void Activate();
+	string GetName()
+		return m_sName;
+	
+	void PS_DOption(string name)
+	{
+		m_sName = name;
+	}
+}
+
+class PS_DOptionEddsMode : PS_DOption
+{
+	override string GetName()
+	{
+		string name = m_sName;
+		if (PS_DEddsTexture.s_bEddsMode)
+			name += " +";
+		else
+			name += " -";
+		return name;
+	}
+	
+	override void Activate()
+	{
+		PS_DEddsTexture.SwitchDrawMode();
 	}
 }
 
@@ -270,7 +345,7 @@ class PS_DSaveSubMenu : PS_DSubMenu
 			{
 				int previewIndex = x + y * SAVE_PREVIEW_WIDTH;
 				int pixelIndex = (x + xo) + (y + yo) * PS_DConst.SCREEN_WIDTH;
-				PS_EddsTextureCanvasComponent.m_aPixels[pixelIndex] = m_aPreviewPixels[previewIndex];
+				PS_DEddsTexture.m_aPixels[pixelIndex] = m_aPreviewPixels[previewIndex];
 			}
 		}
 	}
@@ -331,13 +406,13 @@ class PS_DSaveSubMenu : PS_DSubMenu
 		int startOffsetY2 = x + (y + h - 1) * PS_DConst.SCREEN_WIDTH;
 		for (int i = 0; i < w; i++)
 		{
-			PS_EddsTextureCanvasComponent.m_aPixels[i + startOffsetY1] = color;
-			PS_EddsTextureCanvasComponent.m_aPixels[i + startOffsetY2] = color;
+			PS_DEddsTexture.m_aPixels[i + startOffsetY1] = color;
+			PS_DEddsTexture.m_aPixels[i + startOffsetY2] = color;
 		}
 		for (int i = 1; i < h; i++)
 		{
-			PS_EddsTextureCanvasComponent.m_aPixels[(x) + (y + i) * PS_DConst.SCREEN_WIDTH] = color;
-			PS_EddsTextureCanvasComponent.m_aPixels[(x + w - 1) + (y + i) * PS_DConst.SCREEN_WIDTH] = color;
+			PS_DEddsTexture.m_aPixels[(x) + (y + i) * PS_DConst.SCREEN_WIDTH] = color;
+			PS_DEddsTexture.m_aPixels[(x + w - 1) + (y + i) * PS_DConst.SCREEN_WIDTH] = color;
 		}
 	}
 	

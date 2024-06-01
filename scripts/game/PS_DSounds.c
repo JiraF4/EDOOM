@@ -211,6 +211,7 @@ class PS_DSoundEffect
 			return;
 		
 		m_AudioHandle = AudioSystem.PlaySound(m_sSoundFile);
+		AudioSystem.SetMasterVolume(m_AudioHandle, 20);
 		/* impossible to use
 		AudioHandle audioHandle = AudioSystem.PlaySound(m_sSoundFile);
 		vector mat[4];

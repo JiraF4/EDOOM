@@ -1,3 +1,5 @@
+
+
 class PS_DRenderer
 {
 	// Compiler limitation
@@ -90,9 +92,9 @@ class PS_DRenderer
 		
 		// Lazy canvas init
 		if (!m_wCanvas)
-			m_wCanvas = PS_EddsTextureCanvasComponent.m_w2DCanvas;
+			m_wCanvas = PS_DEddsTexture.m_w2DCanvas;
 		
-		m_bDrawMap = GetGame().GetInputManager().GetActionValue("DMap") != 0;
+		m_bDrawMap = m_DMain.m_DInput.m_fMap != 0;
 		
 		// Clear 2D canvas
 		m_aCanvasWidgetCommand = {};
@@ -247,7 +249,7 @@ class PS_DRenderer
 		}
 		m_iExtraLight = m_Player.m_iExtraLight;
 		if (m_DMain.m_bInMenu)
-			m_iExtraLight -= 6;
+			m_iExtraLight -= 12;
 		// Reset every frame staff
 		m_LastVisSprite = null; // Clear sprites chain
 		m_iVisSpritesCount = 0;
@@ -1310,7 +1312,7 @@ class PS_DRenderer
 				textureI = textureColumn + (int)textureY * tWidth;
 				colorTexture = pixels[textureI];
 				if (colorTexture != 256)
-					PS_EddsTextureCanvasComponent.m_aPixels[y] = pallete[colorTexture];
+					PS_DEddsTexture.m_aPixels[y] = pallete[colorTexture];
 				textureY += inversedScale;
 				if (textureY >= tHeight)
 					textureY = Math.Repeat(textureY, tHeight);
@@ -1327,7 +1329,7 @@ class PS_DRenderer
 		int colorTexture = m_DMain.GetUniqueColorForTexture(textureName, lightLevel);
 		for (int y = y1; y <= y2; y++)
 		{
-			PS_EddsTextureCanvasComponent.m_aPixels[x + y * PS_DConst.SCREEN_WIDTH] = colorTexture;
+			PS_DEddsTexture.m_aPixels[x + y * PS_DConst.SCREEN_WIDTH] = colorTexture;
 		}
 	}
 	
@@ -1366,29 +1368,58 @@ class PS_DRenderer
 			y2 *= sWidth;
 			y1 += x;
 			y2 += x;
+			
+			const int partWidth = (sWidth*8);
+			const int columnHeight = y2 - y1;
+			const int steps = columnHeight / partWidth;
+			const int ySteps = y1 + steps * partWidth;
+			int y = y1;
+			
 			if ((tHeight & (tHeight - 1)) == 0)
 			{
+				// pow 2 textures, use fast mod
 				int mask = tHeight - 1;
-				for (int y = y1; y <= y2; y += sWidth)
+				while (y < ySteps) // Unrolled loop
+				{
+					PS_DEddsTexture.m_aPixels[y] = pallete[pixels[textureX + ((int)textureY & mask) * tWidth]]; textureY += inversedScale; y += sWidth;
+					PS_DEddsTexture.m_aPixels[y] = pallete[pixels[textureX + ((int)textureY & mask) * tWidth]]; textureY += inversedScale; y += sWidth;
+					PS_DEddsTexture.m_aPixels[y] = pallete[pixels[textureX + ((int)textureY & mask) * tWidth]]; textureY += inversedScale; y += sWidth;
+					PS_DEddsTexture.m_aPixels[y] = pallete[pixels[textureX + ((int)textureY & mask) * tWidth]]; textureY += inversedScale; y += sWidth;
+					PS_DEddsTexture.m_aPixels[y] = pallete[pixels[textureX + ((int)textureY & mask) * tWidth]]; textureY += inversedScale; y += sWidth;
+					PS_DEddsTexture.m_aPixels[y] = pallete[pixels[textureX + ((int)textureY & mask) * tWidth]]; textureY += inversedScale; y += sWidth;
+					PS_DEddsTexture.m_aPixels[y] = pallete[pixels[textureX + ((int)textureY & mask) * tWidth]]; textureY += inversedScale; y += sWidth;
+					PS_DEddsTexture.m_aPixels[y] = pallete[pixels[textureX + ((int)textureY & mask) * tWidth]]; textureY += inversedScale; y += sWidth;
+				}
+				for (; y <= y2; y += sWidth)
 				{
 					textureI = textureX + ((int)textureY & mask) * tWidth;
 					colorTexture = pixels[textureI];
-					if (colorTexture != 256)
-					{
-						colorTexture = pallete[colorTexture];
-						PS_EddsTextureCanvasComponent.m_aPixels[y] = colorTexture;
-					}
+					colorTexture = pallete[colorTexture];
+					PS_DEddsTexture.m_aPixels[y] = colorTexture;
 					textureY += inversedScale;
 				}
+				
 			} else {
-				for (int y = y1; y <= y2; y += sWidth)
+				// Slow mod branch
+				while (y < ySteps) // Unrolled loop
+				{
+					PS_DEddsTexture.m_aPixels[y] = pallete[pixels[textureX + ((int)Math.Repeat(textureY, tHeight)) * tWidth]]; textureY += inversedScale; y += sWidth;
+					PS_DEddsTexture.m_aPixels[y] = pallete[pixels[textureX + ((int)Math.Repeat(textureY, tHeight)) * tWidth]]; textureY += inversedScale; y += sWidth;
+					PS_DEddsTexture.m_aPixels[y] = pallete[pixels[textureX + ((int)Math.Repeat(textureY, tHeight)) * tWidth]]; textureY += inversedScale; y += sWidth;
+					PS_DEddsTexture.m_aPixels[y] = pallete[pixels[textureX + ((int)Math.Repeat(textureY, tHeight)) * tWidth]]; textureY += inversedScale; y += sWidth;
+					PS_DEddsTexture.m_aPixels[y] = pallete[pixels[textureX + ((int)Math.Repeat(textureY, tHeight)) * tWidth]]; textureY += inversedScale; y += sWidth;
+					PS_DEddsTexture.m_aPixels[y] = pallete[pixels[textureX + ((int)Math.Repeat(textureY, tHeight)) * tWidth]]; textureY += inversedScale; y += sWidth;
+					PS_DEddsTexture.m_aPixels[y] = pallete[pixels[textureX + ((int)Math.Repeat(textureY, tHeight)) * tWidth]]; textureY += inversedScale; y += sWidth;
+					PS_DEddsTexture.m_aPixels[y] = pallete[pixels[textureX + ((int)Math.Repeat(textureY, tHeight)) * tWidth]]; textureY += inversedScale; y += sWidth;
+				}
+				for (; y <= y2; y += sWidth)
 				{
 					textureI = textureX + (int)Math.Repeat(textureY, tHeight) * tWidth;
 					colorTexture = pixels[textureI];
 					if (colorTexture != 256)
 					{
 						colorTexture = pallete[colorTexture];
-						PS_EddsTextureCanvasComponent.m_aPixels[y] = colorTexture;
+						PS_DEddsTexture.m_aPixels[y] = colorTexture;
 					}
 					textureY += inversedScale;
 				}
@@ -1403,7 +1434,7 @@ class PS_DRenderer
 		int colorTexture = m_DMain.GetUniqueColorForTexture(visPlane.m_TextureFlat.m_sName, visPlane.m_iLightLevel);
 		for (int x = x1; x <= x2; x++)
 		{
-			PS_EddsTextureCanvasComponent.m_aPixels[x + y * PS_DConst.SCREEN_WIDTH] = colorTexture;
+			PS_DEddsTexture.m_aPixels[x + y * PS_DConst.SCREEN_WIDTH] = colorTexture;
 		}
 	}
 	
@@ -1414,20 +1445,20 @@ class PS_DRenderer
 		// Calculate projection - trapezoid on plane
 		// looking big but actually ~200us
 		float z;
-		float floorHeight = (visPlane.m_fHeight - m_Player.m_vCameraPosition[2]);
+		const float floorHeight = (visPlane.m_fHeight - m_Player.m_vCameraPosition[2]);
 		int ty = (PS_DConst.SCREEN_HEIGHT_HALF - y);
 		if (ty != 0)
 			z = PS_DConst.SCREEN_WIDTH_HALF * floorHeight / ty;
-		float offsetY = m_Player.m_fAngleCosReversed * z;
-		float offsetX = m_Player.m_fAngleSinReversed * z;
-		float worldX =  offsetY + m_Player.m_vCameraPosition[1];
-		float worldY =  offsetX - m_Player.m_vCameraPosition[0];
+		const float offsetY = m_Player.m_fAngleCosReversed * z;
+		const float offsetX = m_Player.m_fAngleSinReversed * z;
+		const float worldX =  offsetY + m_Player.m_vCameraPosition[1];
+		const float worldY =  offsetX - m_Player.m_vCameraPosition[0];
 		float leftX  = -offsetX + worldX;
 		float leftY  =  offsetY + worldY;
-		float rightX =  offsetX + worldX;
-		float rightY = -offsetY + worldY;
-		float dx = (rightX - leftX) / SCREEN_WIDTH;
-		float dy = (rightY - leftY) / SCREEN_WIDTH;
+		const float rightX =  offsetX + worldX;
+		const float rightY = -offsetY + worldY;
+		const float dx = (rightX - leftX) / SCREEN_WIDTH;
+		const float dy = (rightY - leftY) / SCREEN_WIDTH;
 		
 		// Light level
 		int lightLevel = visPlane.m_iLightLevel;
@@ -1455,24 +1486,60 @@ class PS_DRenderer
 		x1 += screenOffset;
 		x2 += screenOffset;
 		
+		// Loop unrolling, save some time (+-400ns)
+		int lineWidth = (x2 - x1);
+		int xSteps = x1 + lineWidth - (lineWidth & 7);
+		
 		// Outer scope vars - save some time
-		int x, uxt, uyt, textureI, color; 
-		for (x = x1; x < x2; x++) // Really tight loop
+		int uxt, uyt, textureI, color;
+		
+		// Write pixels in 8px batches
+		int pixelsBatch[8]; // Buffer, reduce address calculation
+		while (x1 < xSteps)
+		{
+			// Write to local buffer x8
+			pixelsBatch[0] = pallete[pixels.m_aPixels[((int) leftX & 63) | (((int) leftY & 63) << 6)]];
+			leftX += dx; leftY += dy;
+			pixelsBatch[1] = pallete[pixels.m_aPixels[((int) leftX & 63) | (((int) leftY & 63) << 6)]];
+			leftX += dx; leftY += dy;
+			pixelsBatch[2] = pallete[pixels.m_aPixels[((int) leftX & 63) | (((int) leftY & 63) << 6)]];
+			leftX += dx; leftY += dy;
+			pixelsBatch[3] = pallete[pixels.m_aPixels[((int) leftX & 63) | (((int) leftY & 63) << 6)]];
+			leftX += dx; leftY += dy;
+			pixelsBatch[4] = pallete[pixels.m_aPixels[((int) leftX & 63) | (((int) leftY & 63) << 6)]];
+			leftX += dx; leftY += dy;
+			pixelsBatch[5] = pallete[pixels.m_aPixels[((int) leftX & 63) | (((int) leftY & 63) << 6)]];
+			leftX += dx; leftY += dy;
+			pixelsBatch[6] = pallete[pixels.m_aPixels[((int) leftX & 63) | (((int) leftY & 63) << 6)]];
+			leftX += dx; leftY += dy;
+			pixelsBatch[7] = pallete[pixels.m_aPixels[((int) leftX & 63) | (((int) leftY & 63) << 6)]]; 
+			leftX += dx; leftY += dy;
+			
+			// Copy to global buffer
+			StaticArray.Copy(PS_DEddsTexture.m_aPixels, pixelsBatch, x1);
+			x1 += 8;
+		}
+		
+		int oldColorIndex;
+		// Write last pixels, same as batches but not two liner
+		while (x1 < x2)
 		{
 			// Fast modulo of 64
 			uxt = (int) leftX & 63;
 			uyt = (int) leftY & 63;
 			
-			textureI = uxt | (uyt << 6);        // x + y * 64 - But funcy, not sure is it really valuable, maybe -0.5ms
+			textureI = uxt | (uyt << 6);             // x + y * 64 - But funcy, not sure is it needed
 			color = pixels.m_aPixels[textureI]; // Pick pallete index
 			color = pallete[color];             // Pick actual color
 			
 			// Write to buffer
-			PS_EddsTextureCanvasComponent.m_aPixels[x] = color;
+			PS_DEddsTexture.m_aPixels[x1] = color;
 			
 			// Sub pixel texture step
 			leftX += dx;
 			leftY += dy;
+			
+			x1++;
 		}
 	}
 	

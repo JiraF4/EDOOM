@@ -21,7 +21,7 @@ class PS_DSave
 	
 	static void LoadTransfer(PS_DMain dMain, string path)
 	{
-		dMain.BufferSave();
+		dMain.MeltScreen();
 		Load(dMain, path);
 		dMain.m_CurrentGameState = PS_DGameState.GS_LEVEL;
 		dMain.m_bInMenu = false;

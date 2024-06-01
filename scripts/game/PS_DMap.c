@@ -366,16 +366,17 @@ class PS_DMap
 			m_iTickNum++;
 			FixedUpdate(TICK_DELAY);
 			m_fLastTickTime += TICK_DELAY;
+			m_DMain.m_DInput.ResetInput();
 		}
 	}
 	
 	//------------------------------------------------------------------------------------------------
 	void FixedUpdate(float tickTime)
 	{
-		m_DMain.m_DInput.Update();
+		m_DMain.m_DInput.UpdateDemo();
 		if (!m_DMain.m_EntityPlayer.m_bDead)
 		{
-			float esc = GetGame().GetInputManager().GetActionValue("DESC");
+			float esc = m_DMain.m_DInput.m_fESC;
 			if (esc)
 			{
 				m_DMain.m_bInMenu = true;
@@ -395,7 +396,7 @@ class PS_DMap
 		} else {
 			if (m_DMain.m_EntityPlayer.m_iDamageTicks <= 0)
 			{
-				float action = GetGame().GetInputManager().GetActionValue("DAction");
+				float action = m_DMain.m_DInput.m_fAction;
 				if (action > 0)
 				{
 					m_DMain.Restart();

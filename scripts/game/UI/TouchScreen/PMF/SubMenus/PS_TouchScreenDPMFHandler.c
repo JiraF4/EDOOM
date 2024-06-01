@@ -2,7 +2,7 @@ class PS_TouchScreenDPMFHandler : RHS_TouchScreenMenuPMFSubHandler
 {
 	protected RHS_VehiclePMFScreenComponent m_VehiclePMFScreenComponent;
 	
-	protected ref PS_EddsTextureCanvasComponent m_EddsTextureCanvasComponent;
+	protected ref PS_DEddsTexture m_DEddsTexture;
 	RHS_TouchScreenMenuPMFDrongOSHandler m_DrongOSHandler;
 	SCR_CharacterCameraHandlerComponent m_CharacterCameraHandler;
 	RHS_CustomCameraPointInfo m_CustomCameraPointInfo;
@@ -18,8 +18,8 @@ class PS_TouchScreenDPMFHandler : RHS_TouchScreenMenuPMFSubHandler
 	void InitPMF(RHS_VehiclePMFScreenComponent VehiclePMFScreenComponent)
 	{
 		m_VehiclePMFScreenComponent = VehiclePMFScreenComponent;
-		m_EddsTextureCanvasComponent = new PS_EddsTextureCanvasComponent(m_wRoot);
-		m_EddsTextureCanvasComponent.EOnInit(VehiclePMFScreenComponent.GetOwner());
+		m_DEddsTexture = new PS_DEddsTexture(m_wRoot);
+		m_DEddsTexture.EOnInit(VehiclePMFScreenComponent.GetOwner());
 		
 		IEntity character = SCR_PlayerController.GetLocalMainEntity();
 		if (character)
@@ -40,16 +40,16 @@ class PS_TouchScreenDPMFHandler : RHS_TouchScreenMenuPMFSubHandler
 		else if (customCameraPointInfo == m_CustomCameraPointInfo)
 			GetGame().GetInputManager().ActivateContext("DContext");
 		
-		if (m_EddsTextureCanvasComponent.m_DMain.m_bClose)
+		if (m_DEddsTexture.m_DMain.m_bClose)
 		{
-			m_EddsTextureCanvasComponent = null;
+			m_DEddsTexture = null;
 			
 			m_DrongOSHandler.CloseD();
 		}
 		
-		if (m_EddsTextureCanvasComponent)
+		if (m_DEddsTexture)
 		{
-			m_EddsTextureCanvasComponent.EOnFrame(m_VehiclePMFScreenComponent.GetOwner(), timeSlice);
+			m_DEddsTexture.Update(timeSlice);
 		}
 	}
 }

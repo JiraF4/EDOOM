@@ -16,6 +16,7 @@ class PS_DMainMenu
 	ref PS_DSubMenu m_InGameMenu;
 	ref PS_DReadMeSubMenu m_ReadMeMenu;
 	ref PS_DSubMenu m_EpisodeMenu;
+	ref PS_DOptionsSubMenu m_OptionsMenu;
 	ref PS_DSkillSubMenu m_SkillMenu;
 	ref PS_DSaveSubMenu m_SaveMenu;
 	
@@ -38,6 +39,7 @@ class PS_DMainMenu
 		m_InGameMenu = new PS_DSubMenu(this, dMain);
 		m_ReadMeMenu = new PS_DReadMeSubMenu(this, dMain);
 		m_EpisodeMenu = new PS_DSubMenu(this, dMain);
+		m_OptionsMenu = new PS_DOptionsSubMenu(this, dMain);
 		m_SkillMenu = new PS_DSkillSubMenu(this, dMain);
 		m_SaveMenu = new PS_DSaveSubMenu(this, dMain);
 		
@@ -50,7 +52,7 @@ class PS_DMainMenu
 		{
 			new PS_DMenuItem(this, dAssets, "M_DOOM"),
 			new PS_DMenuItem(this, dAssets, "M_NGAME", m_EpisodeMenu),
-			new PS_DMenuItem(this, dAssets, "M_OPTION"),
+			new PS_DMenuItem(this, dAssets, "M_OPTION", m_OptionsMenu),
 			new PS_DLoadMenuItem(this, dAssets, "M_LOADG", m_SaveMenu),
 			new PS_DMenuItem(this, dAssets, "M_RDTHIS", m_ReadMeMenu),
 			new PS_DExitMenuItem(this, dAssets, "M_ENDGAM")
@@ -60,7 +62,7 @@ class PS_DMainMenu
 		{
 			new PS_DMenuItem(this, dAssets, "M_DOOM"),
 			new PS_DMenuItem(this, dAssets, "M_NGAME", m_EpisodeMenu),
-			new PS_DMenuItem(this, dAssets, "M_OPTION"),
+			new PS_DMenuItem(this, dAssets, "M_OPTION", m_OptionsMenu),
 			new PS_DSaveMenuItem(this, dAssets, "M_SGTTL", m_SaveMenu),
 			new PS_DLoadMenuItem(this, dAssets, "M_LOADG", m_SaveMenu),
 			new PS_DMenuItem(this, dAssets, "M_RDTHIS", m_ReadMeMenu),
@@ -132,10 +134,10 @@ class PS_DMainMenu
 		
 		m_CurrentSubMenu.Update();
 		
-		float direction = GetGame().GetInputManager().GetActionValue("DForward");
-		if (GetGame().GetInputManager().GetActionTriggered("DW1"))
+		float direction = m_DMain.m_DInput.m_fForward;
+		if (m_DMain.m_DInput.m_iWeaponSlot == 0)
 			direction++;
-		if (GetGame().GetInputManager().GetActionTriggered("DW3"))
+		if (m_DMain.m_DInput.m_iWeaponSlot == 2)
 			direction--;
 		if (direction != 0)
 		{
@@ -149,7 +151,7 @@ class PS_DMainMenu
 			m_bDirection = false;
 		
 		
-		float ent = GetGame().GetInputManager().GetActionValue("DENT");
+		float ent = m_DMain.m_DInput.m_fENT;
 		if (ent)
 		{
 			if (m_bENT)
@@ -161,8 +163,8 @@ class PS_DMainMenu
 			m_bENT = false;
 		
 		
-		float esc = GetGame().GetInputManager().GetActionValue("DESC");
-		if (GetGame().GetInputManager().GetActionValue("DBACK"))
+		float esc = m_DMain.m_DInput.m_fESC;
+		if (m_DMain.m_DInput.m_fBack)
 			esc++;
 		if (esc)
 		{
@@ -189,7 +191,7 @@ class PS_DMainMenu
 		else
 			m_bESC = false;
 		
-		float action = GetGame().GetInputManager().GetActionValue("DAction");
+		float action = m_DMain.m_DInput.m_fAction;
 		if (action)
 		{
 			if (m_bAction)
@@ -222,8 +224,8 @@ class PS_DMainMenu
 				{
 					int color = pallete.m_aColors[colorIndex];
 					int pixelIndex = x + y * PS_DConst.SCREEN_WIDTH;
-					if (pixelIndex < PS_EddsTextureCanvasComponent.SCREEN_SIZE)
-						PS_EddsTextureCanvasComponent.m_aPixels[pixelIndex] = color;
+					if (pixelIndex < PS_DEddsTexture.SCREEN_SIZE)
+						PS_DEddsTexture.m_aPixels[pixelIndex] = color;
 				}
 				yp++;
 			}

@@ -1,47 +1,45 @@
 // Spaggetty kingdom of our image drawing software
 class PS_DMain
 {
-	static PS_DMain s_DMain;
+	static PS_DMain s_DMain; // FIXME: remove static reference
 	
-	ref PS_DWAD m_DWAD;
-	ref PS_DMap m_DMap;
-	ref PS_DRenderer m_DRenderer;
-	ref PS_DInterface m_DInterface;
-	ref PS_DInput m_DInput;
+	// Systems
+	ref PS_DWAD m_DWAD;             // WAD file (Game resources)
+	ref PS_DMap m_DMap;             // Current loaded map
+	ref PS_DRenderer m_DRenderer;   // 3D renderer (Also fill 2D canvas)
+	ref PS_DInterface m_DInterface; // All in game interface stuff
+	ref PS_DInput m_DInput;         // In game input, menus read it directly (FIXME?)
 	
-	ref PS_DMainMenu m_DMainMenu;
-	ref PS_DIntermission m_DIntermission;
-	ref PS_DEndingScreen m_DEndingScreen;
+	ref PS_DMainMenu m_DMainMenu;         // All menus, not main (FIXME: Bad naming)
+	ref PS_DIntermission m_DIntermission; // Intermission screen renderer
+	ref PS_DEndingScreen m_DEndingScreen; // Ending screen renderer
 	
-	// Save data between levels
-	ref PS_DEntityPlayer m_EntityPlayer;
+	ref PS_DEntityPlayer m_EntityPlayer; // Save player data between levels
 		
-	// dynamic
-	float m_fTime;
-	int m_iFrameNum;
-	bool m_bSecret;
-	bool m_bDidSecret;
+	// Dynamic stuff
+	int m_iFrameNum;   // Current engine frame num
+	bool m_bSecret;    // Secret exit used
+	bool m_bDidSecret; // Player did secret
+	bool m_bClose;     // Need to be closed by outer scope flag
+	bool m_bInMenu;    // Render menu flag
 	
-	bool m_bClose;
+	int m_iDifficulty; // Selected skill level
+	PS_DGameState m_CurrentGameState = PS_DGameState.GS_MAINMENU; // Current state for renderer selection
 	
-	bool m_bInMenu;
+	ref RandomGenerator m_RandomGenerator; // All random need to be predictable for demos (Broken?)
 	
-	int m_iDifficulty;
+	static const int SCREEN_WIDTH = PS_DEddsTexture.SCREEN_WIDTH;
+	const static int SCREEN_HEIGHT = PS_DEddsTexture.SCREEN_HEIGHT;
+	const static int SCREEN_SIZE = PS_DEddsTexture.SCREEN_SIZE;
 	
-	PS_DGameState m_CurrentGameState = PS_DGameState.GS_MAINMENU;
+	// Melt effect
+	static int m_aPixelsBuffer[SCREEN_SIZE];  // Melting screen pixels copy
+	static int m_aPixelsOffset[SCREEN_WIDTH]; // Offsets for each pixel column
+	int m_iMeltEffect = 1;                    // Screen melting flag, booleans a little funky
 	
-	ref RandomGenerator m_RandomGenerator;
-	
-	static const int SCREEN_WIDTH = PS_EddsTextureCanvasComponent.SCREEN_WIDTH;
-	const static int SCREEN_HEIGHT = PS_EddsTextureCanvasComponent.SCREEN_HEIGHT;
-	const static int SCREEN_SIZE = PS_EddsTextureCanvasComponent.SCREEN_SIZE;
-	static int m_aPixelsBuffer[SCREEN_SIZE]; 
-	static int m_aPixelsOffset[SCREEN_WIDTH]; 
-	int m_iMeltEffect = 1;
-	
-	int m_iCurrentLevel = 0;
-	int m_iNextLevel = 0;
-	ref array<string> m_aLevels = {
+	int m_iCurrentLevel = 0;        // Current level num
+	int m_iNextLevel = 0;           // Level to be loaded
+	ref array<string> m_aLevels = { // Level names in WAD (TODO: move somewere else)
 		"E1M1",
 		"E1M2",
 		"E1M3",
@@ -54,6 +52,7 @@ class PS_DMain
 	};
 	
 	//------------------------------------------------------------------------------------------------
+	// Debug rendering function (Remove?)
 	static ref map<string, ref map<int, int>> m_mColorsMap = new map<string, ref map<int, int>>();
 	static int m_iLastColor;
 	int GetUniqueColorForTexture(string textureName, int lightLevel)
@@ -81,19 +80,21 @@ class PS_DMain
 	}
 	
 	//------------------------------------------------------------------------------------------------
+	// Launch end game sequence
 	void EndGame()
 	{
 		PS_DMusicEffect.Play("INTROA");
 		
-		BufferSave();
+		MeltScreen();
 		m_DEndingScreen.m_iLastChar = 0;
 		m_CurrentGameState = PS_DGameState.GS_END;
 	}
 	
 	//------------------------------------------------------------------------------------------------
+	// Restart game
 	void Restart()
 	{
-		BufferSave();
+		MeltScreen();
 		m_CurrentGameState = PS_DGameState.GS_MAINMENU;
 		m_iCurrentLevel = 0;
 		m_iNextLevel = 0;
@@ -103,6 +104,7 @@ class PS_DMain
 	}
 	
 	//------------------------------------------------------------------------------------------------
+	// Launch intermission sequence
 	void Intermission(bool secret = false)
 	{
 		PS_DMusicEffect.Play("VICTOR");
@@ -116,15 +118,17 @@ class PS_DMain
 		}
 		if (m_bSecret)
 			m_iNextLevel = 8;
-		BufferSave();
+		MeltScreen();
 		m_CurrentGameState = PS_DGameState.GS_INTERMISSION;
 		m_DIntermission.m_DMap = m_DMap;
 		m_DIntermission.CalculatePercent(m_DMap);
 	}
 	
 	//------------------------------------------------------------------------------------------------
+	// Load next level, and start game
 	void NextLevel()
 	{
+		// Secret check
 		if (m_bSecret)
 		{
 			m_bSecret = false;
@@ -135,16 +139,19 @@ class PS_DMain
 		else
 			m_iCurrentLevel++;
 		
+		// Lavel music
 		PS_DMusicEffect.Play(m_aLevels[m_iCurrentLevel], m_iCurrentLevel);
 		
-		LoadLevel(m_aLevels[m_iCurrentLevel]);
-		BufferSave();
-		m_CurrentGameState = PS_DGameState.GS_LEVEL;
+		LoadLevel(m_aLevels[m_iCurrentLevel]);       // Actually load level from WAD
+		MeltScreen();                                // Melt effect
+		m_CurrentGameState = PS_DGameState.GS_LEVEL; // Switch state
 	}
 	
 	//------------------------------------------------------------------------------------------------
-	void BufferSave()
+	// Start screen melting effect
+	void MeltScreen()
 	{
+		// Set random columns offsets
 		int yOffset = -64;
 		for (int i = 0; i < SCREEN_WIDTH; i++)
 		{
@@ -152,18 +159,20 @@ class PS_DMain
 			yOffset = Math.Min(yOffset, 0);
 			m_aPixelsOffset[i] = yOffset;
 		}
-		m_iMeltEffect = 1;
-		StaticArray.Copy(m_aPixelsBuffer, PS_EddsTextureCanvasComponent.m_aPixels);
+		m_iMeltEffect = 1; // Set flag
+		StaticArray.Copy(m_aPixelsBuffer, PS_DEddsTexture.m_aPixels); // Copy current screen state
 	}
 	
 	//------------------------------------------------------------------------------------------------
 	void Update(float timeSlice)
 	{
-		PS_DMusicEffect.Update(timeSlice);
+		PS_DMusicEffect.Update(timeSlice); // Update sound timer
 		
-		m_fTime = GetGame().GetWorld().GetWorldTime();
-		m_iFrameNum = GetGame().GetWorld().GetFrameNumber();
+		float updateTime = GetGame().GetWorld().GetWorldTime();
 		
+		m_iFrameNum++;
+		
+		// TODO: proper QuickSaves
 		if (GetGame().GetInputManager().GetActionTriggered("DQS"))
 		{
 			PS_DSave.Save(this, "$profile:DE/Saves/QuickSave.dsv")
@@ -173,14 +182,16 @@ class PS_DMain
 			PS_DSave.Load(this, "$profile:DE/Saves/QuickSave.dsv")
 		}
 		
+		m_DInput.UpdateValues();
 		switch (m_CurrentGameState)
 		{
 			case PS_DGameState.GS_MAINMENU:
 				m_DMainMenu.Draw();
 				m_DMainMenu.Update();
+				m_DInput.ResetInput();
 				break;
 			case PS_DGameState.GS_LEVEL:
-				if (m_iMeltEffect <= 0 && !m_bInMenu)
+				if (m_iMeltEffect <= 0 && !m_bInMenu) // Skip logic while melting
 					m_DMap.Update();
 				else
 					m_DMap.m_fLastTickTime = GetGame().GetWorld().GetWorldTime();
@@ -191,43 +202,29 @@ class PS_DMain
 				{
 					m_DMainMenu.Draw();
 					m_DMainMenu.Update();
+					m_DInput.ResetInput();
 				}
 			
 				break;
 			case PS_DGameState.GS_INTERMISSION:
-				if (m_iMeltEffect <= 0)
+				if (m_iMeltEffect <= 0) // Skip logic while melting
 					m_DIntermission.Update();
 				else
 					m_DIntermission.m_fLastTickTime = GetGame().GetWorld().GetWorldTime();
 				m_DIntermission.Draw();
 				break;
 			case PS_DGameState.GS_END:
-				if (m_iMeltEffect <= 0)
+				if (m_iMeltEffect <= 0) // Skip logic while melting
 					m_DEndingScreen.Update();
 				else
 					m_DEndingScreen.m_fLastTickTime = GetGame().GetWorld().GetWorldTime();
 				m_DEndingScreen.Draw();
 				break;
 		}
-		if (m_iMeltEffect > 0)
+		if (m_iMeltEffect > 0) // Draw melt effect
 		{
 			MeltEffect();
 		}
-		
-		GetGame().GetInputManager().SetActionValue("DRight", 0);
-		GetGame().GetInputManager().SetActionValue("DForward", 0);
-		GetGame().GetInputManager().SetActionValue("DAim", 0);
-		GetGame().GetInputManager().SetActionValue("DAimGamepade", 0);
-		GetGame().GetInputManager().SetActionValue("DFire", 0);
-		GetGame().GetInputManager().SetActionValue("DAction", 0);
-		
-		GetGame().GetInputManager().SetActionValue("DW1", 0);
-		GetGame().GetInputManager().SetActionValue("DW2", 0);
-		GetGame().GetInputManager().SetActionValue("DW3", 0);
-		GetGame().GetInputManager().SetActionValue("DW4", 0);
-		GetGame().GetInputManager().SetActionValue("DW5", 0);
-		GetGame().GetInputManager().SetActionValue("DW6", 0);
-		GetGame().GetInputManager().SetActionValue("DW7", 0);
 	}
 	
 	void MeltEffect()
@@ -249,7 +246,7 @@ class PS_DMain
 				int offsetY = Math.Max(m_aPixelsOffset[x], 0);
 				int indexScreen = x + (y + offsetY) * PS_DConst.SCREEN_WIDTH;
 				if (indexScreen < SCREEN_SIZE)
-					PS_EddsTextureCanvasComponent.m_aPixels[indexScreen] = m_aPixelsBuffer[index];
+					PS_DEddsTexture.m_aPixels[indexScreen] = m_aPixelsBuffer[index];
 			}
 		}
 	}
@@ -316,8 +313,6 @@ class PS_DMain
 		m_DMainMenu = new PS_DMainMenu(this, m_DWAD.m_DAssets);
 		m_DIntermission = new PS_DIntermission(this, m_DWAD.m_DAssets);
 		m_DEndingScreen = new PS_DEndingScreen(this, m_DWAD.m_DAssets);
-		
-		//LoadLevel();
 	}
 	
 	void ResetPlayer()
@@ -354,7 +349,7 @@ class PS_DMain
 			for (int x = 0; x < PS_DConst.SAVE_PREVIEW_WIDTH; x++)
 			{
 				int pixelIndex = ((int) xTexture) + (((int) yTexture) * PS_DConst.SCREEN_WIDTH);
-				int pixel = PS_EddsTextureCanvasComponent.m_aPixels[pixelIndex];
+				int pixel = PS_DEddsTexture.m_aPixels[pixelIndex];
 				saveFile.Write(pixel, 4);
 				xTexture += xStep;
 			}

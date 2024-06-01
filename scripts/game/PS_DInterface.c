@@ -222,7 +222,7 @@ class PS_DInterface
 			xBob = -Math.Cos(timeFactor) * speedFactor * 2;
 			yBob = -Math.Cos(timeFactor*2) * speedFactor;
 		}
-		DrawPatch(xBob, weaponOffset + m_Player.m_iWeaponY + yBob, weaponPatch, true);
+		DrawPatch(xBob, weaponOffset + m_Player.m_iWeaponY + yBob, weaponPatch, m_CurrentPallete, true);
 		
 		// FIXME, at least cache
 		if (m_Player.m_CurrentFlashState)
@@ -233,10 +233,10 @@ class PS_DInterface
 			if (frame > 32767) // Light sprites
 				frame -= 32768; // TODO: light
 			PS_DPatch flashPatch = m_DAssets.m_mPatches[flashName + SCR_StringHelper.UPPERCASE[frame] + "0"];
-			DrawPatch(0, weaponOffset, flashPatch);
+			DrawPatch(0, weaponOffset, flashPatch, m_CurrentPallete);
 		}
 		
-		StaticArray.Copy(PS_EddsTextureCanvasComponent.m_aPixels, m_aSTBARPixels, m_iInterfaceOffset);
+		StaticArray.Copy(PS_DEddsTexture.m_aPixels, m_aSTBARPixels, m_iInterfaceOffset);
 		//DrawPatch(0, 168, m_STBAR);
 		//DrawPatch(ST_ARMSBGX, ST_ARMSBGY, m_STARMS);
 		
@@ -249,9 +249,9 @@ class PS_DInterface
 			faceDamageId = 0;
 		
 		if (m_Player.m_bDead)
-			DrawPatch(ST_FACESX, ST_FACESY, m_STFDEAD0);
+			DrawPatch(ST_FACESX, ST_FACESY, m_STFDEAD0, m_CurrentPallete);
 		else
-			DrawPatch(ST_FACESX, ST_FACESY, m_aSTFST[faceDamageId][m_Player.m_iCurrentFace]);
+			DrawPatch(ST_FACESX, ST_FACESY, m_aSTFST[faceDamageId][m_Player.m_iCurrentFace], m_CurrentPallete);
 		
 		DrawWeapons();
 		
@@ -289,7 +289,7 @@ class PS_DInterface
 			PS_DPatch charPatch = m_aSTCFN[char];
 			if (charPatch)
 			{
-				DrawPatch(x, y, charPatch);
+				DrawPatch(x, y, charPatch, m_CurrentPallete);
 				x += charPatch.m_DPatchHeader.m_iWidth;
 			}
 			if (char == 32)
@@ -302,23 +302,23 @@ class PS_DInterface
 		if (m_Player.m_aKeys[0] > 0)
 		{
 			if (m_Player.m_aKeys[0] == 1)
-				DrawPatch(ST_KEY0X, ST_KEY0Y, m_aSTKEYS[0]);
+				DrawPatch(ST_KEY0X, ST_KEY0Y, m_aSTKEYS[0], m_CurrentPallete);
 			else
-				DrawPatch(ST_KEY0X, ST_KEY0Y, m_aSTKEYS[3]);
+				DrawPatch(ST_KEY0X, ST_KEY0Y, m_aSTKEYS[3], m_CurrentPallete);
 		}
 		if (m_Player.m_aKeys[1] > 0)
 		{
 			if (m_Player.m_aKeys[1] == 1)
-				DrawPatch(ST_KEY1X, ST_KEY1Y, m_aSTKEYS[1]);
+				DrawPatch(ST_KEY1X, ST_KEY1Y, m_aSTKEYS[1], m_CurrentPallete);
 			else
-				DrawPatch(ST_KEY1X, ST_KEY1Y, m_aSTKEYS[4]);
+				DrawPatch(ST_KEY1X, ST_KEY1Y, m_aSTKEYS[4], m_CurrentPallete);
 		}
 		if (m_Player.m_aKeys[2] > 0)
 		{
 			if (m_Player.m_aKeys[2] == 1)
-				DrawPatch(ST_KEY2X, ST_KEY2Y, m_aSTKEYS[2]);
+				DrawPatch(ST_KEY2X, ST_KEY2Y, m_aSTKEYS[2], m_CurrentPallete);
 			else
-				DrawPatch(ST_KEY2X, ST_KEY2Y, m_aSTKEYS[5]);
+				DrawPatch(ST_KEY2X, ST_KEY2Y, m_aSTKEYS[5], m_CurrentPallete);
 		}
 	}
 	
@@ -328,7 +328,7 @@ class PS_DInterface
 		{
 			PS_DPatch patch = m_aSTYSNUMs[Math.Mod(count, 10)];
 			x -= patch.m_DPatchHeader.m_iWidth;
-			DrawPatch(x, y, patch);
+			DrawPatch(x, y, patch, m_CurrentPallete);
 			count = count / 10;
 			if (count == 0)
 				break;
@@ -338,29 +338,29 @@ class PS_DInterface
 	void DrawWeapons()
 	{
 		if (m_Player.m_aWeapons[1] == 1)
-			DrawPatch(ST_WEAPON0X, ST_WEAPON0Y, m_aSTYSNUMs[2]);
+			DrawPatch(ST_WEAPON0X, ST_WEAPON0Y, m_aSTYSNUMs[2], m_CurrentPallete);
 		else
-			DrawPatch(ST_WEAPON0X, ST_WEAPON0Y, m_aSTGNUMs[2]);
+			DrawPatch(ST_WEAPON0X, ST_WEAPON0Y, m_aSTGNUMs[2], m_CurrentPallete);
 		if (m_Player.m_aWeapons[2] == 1)
-			DrawPatch(ST_WEAPON1X, ST_WEAPON1Y, m_aSTYSNUMs[3]);
+			DrawPatch(ST_WEAPON1X, ST_WEAPON1Y, m_aSTYSNUMs[3], m_CurrentPallete);
 		else
-			DrawPatch(ST_WEAPON1X, ST_WEAPON1Y, m_aSTGNUMs[3]);
+			DrawPatch(ST_WEAPON1X, ST_WEAPON1Y, m_aSTGNUMs[3], m_CurrentPallete);
 		if (m_Player.m_aWeapons[3] == 1)
-			DrawPatch(ST_WEAPON2X, ST_WEAPON2Y, m_aSTYSNUMs[4]);
+			DrawPatch(ST_WEAPON2X, ST_WEAPON2Y, m_aSTYSNUMs[4], m_CurrentPallete);
 		else
-			DrawPatch(ST_WEAPON2X, ST_WEAPON2Y, m_aSTGNUMs[4]);
+			DrawPatch(ST_WEAPON2X, ST_WEAPON2Y, m_aSTGNUMs[4], m_CurrentPallete);
 		if (m_Player.m_aWeapons[4] == 1)
-			DrawPatch(ST_WEAPON3X, ST_WEAPON3Y, m_aSTYSNUMs[5]);
+			DrawPatch(ST_WEAPON3X, ST_WEAPON3Y, m_aSTYSNUMs[5], m_CurrentPallete);
 		else
-			DrawPatch(ST_WEAPON3X, ST_WEAPON3Y, m_aSTGNUMs[5]);
+			DrawPatch(ST_WEAPON3X, ST_WEAPON3Y, m_aSTGNUMs[5], m_CurrentPallete);
 		if (m_Player.m_aWeapons[5] == 1)
-			DrawPatch(ST_WEAPON4X, ST_WEAPON4Y, m_aSTYSNUMs[6]);
+			DrawPatch(ST_WEAPON4X, ST_WEAPON4Y, m_aSTYSNUMs[6], m_CurrentPallete);
 		else
-			DrawPatch(ST_WEAPON4X, ST_WEAPON4Y, m_aSTGNUMs[6]);
+			DrawPatch(ST_WEAPON4X, ST_WEAPON4Y, m_aSTGNUMs[6], m_CurrentPallete);
 		if (m_Player.m_aWeapons[6] == 1)
-			DrawPatch(ST_WEAPON5X, ST_WEAPON5Y, m_aSTYSNUMs[7]);
+			DrawPatch(ST_WEAPON5X, ST_WEAPON5Y, m_aSTYSNUMs[7], m_CurrentPallete);
 		else
-			DrawPatch(ST_WEAPON5X, ST_WEAPON5Y, m_aSTGNUMs[7]);
+			DrawPatch(ST_WEAPON5X, ST_WEAPON5Y, m_aSTGNUMs[7], m_CurrentPallete);
 	}
 	
 	void DrawAmmo()
@@ -374,7 +374,7 @@ class PS_DInterface
 		{
 			PS_DPatch patch = m_aSTTNUMs[Math.Mod(ammo, 10)];
 			x -= patch.m_DPatchHeader.m_iWidth;
-			DrawPatch(x, ST_AMMOY, patch);
+			DrawPatch(x, ST_AMMOY, patch, m_CurrentPallete);
 			ammo = ammo / 10;
 			if (ammo == 0)
 				break;
@@ -384,13 +384,13 @@ class PS_DInterface
 	void DrawHealth()
 	{
 		PS_DPatch patch = m_aSTTNUMs[10];
-		DrawPatch(ST_HEALTHX, ST_HEALTHY, patch);
+		DrawPatch(ST_HEALTHX, ST_HEALTHY, patch, m_CurrentPallete);
 		int health = m_Player.m_iHealth;
 		int x = ST_HEALTHX - patch.m_DPatchHeader.m_iWidth;
 		for (int i = 0; i < 3; i++)
 		{
 			patch = m_aSTTNUMs[Math.Mod(health, 10)];
-			DrawPatch(x, ST_HEALTHY, patch);
+			DrawPatch(x, ST_HEALTHY, patch, m_CurrentPallete);
 			x -= patch.m_DPatchHeader.m_iWidth;
 			health = health / 10;
 			if (health == 0)
@@ -401,57 +401,101 @@ class PS_DInterface
 	void DrawArmour()
 	{
 		PS_DPatch patch = m_aSTTNUMs[10];
-		DrawPatch(ST_ARMORX, ST_ARMORY, patch);
+		DrawPatch(ST_ARMORX, ST_ARMORY, patch, m_CurrentPallete);
 		int armour = m_Player.m_iArmour;
 		int x = ST_ARMORX - patch.m_DPatchHeader.m_iWidth;
 		for (int i = 0; i < 3; i++)
 		{
 			patch = m_aSTTNUMs[Math.Mod(armour, 10)];
-			DrawPatch(x, ST_ARMORY, patch);
+			DrawPatch(x, ST_ARMORY, patch, m_CurrentPallete);
 			x -= patch.m_DPatchHeader.m_iWidth;
 			armour = armour / 10;
 			if (armour == 0)
 				break;
 		}
 	}
-	void DrawPatch(int x, int y, PS_DPatch patch, bool hide = false)
+	
+	void DrawPatch(int x, int y, PS_DPatch patch, PS_DPalette pallete, bool hide = false)
 	{
-		PS_DPalette pallete = m_CurrentPallete;
 		x -= patch.m_DPatchHeader.m_iLeftOffset;
 		y -= patch.m_DPatchHeader.m_iTopOffset;
 		int width = patch.m_DPatchHeader.m_iWidth;
 		int height = patch.m_DPatchHeader.m_iHeight;
 		
-		int y1 = y;
-		int y2 = y + height;
-		y1 *= PS_DConst.SCREEN_WIDTH;
+		int y2 = y + height - 1;
+		y *= PS_DConst.SCREEN_WIDTH;
 		y2 *= PS_DConst.SCREEN_WIDTH;
-		
+		if (hide && y2 > 53760)
+			y2 = 53760;
 		int x2 = x + width;
-		int xp = 0;
-		for (x; x < x2; x++)
+		
+		int lindeWidth = x2 - x;
+		int bp, be, bl, ls;
+		bp = x + y;
+		be = x2 + y2;
+		bl = x2 + y;
+		ls = PS_DConst.SCREEN_WIDTH - lindeWidth;
+		
+		if (width == 4 && height == 6)
 		{
-			int yp = 0;
-			for (y = y1; y < y2; y += PS_DConst.SCREEN_WIDTH)
+			DrawPatch4x6(bp, be, bl, ls, patch.m_DTexture.m_aPixels, pallete);
+			return;
+		}
+		
+		int pp, colorIndex, color;
+		while (bp < be)
+		{
+			while (bp < bl)
 			{
-				if (hide && y > 53760)
-					break;
-				int colorIndex = patch.m_DTexture.m_aPixels[xp + yp];
+				colorIndex = patch.m_DTexture.m_aPixels[pp];
 				if (colorIndex != 256)
 				{
-					int color = pallete.m_aColors[colorIndex];
-					int pixelIndex = x + y;
-					if (pixelIndex < PS_EddsTextureCanvasComponent.SCREEN_SIZE)
-						PS_EddsTextureCanvasComponent.m_aPixels[pixelIndex] = color;
+					color = pallete.m_aColors[colorIndex];
+					PS_DEddsTexture.m_aPixels[bp] = color;
 				}
-				yp += width;
+				pp++;
+				bp++;
 			}
-			xp++;
+			bl += PS_DConst.SCREEN_WIDTH; // Next line
+			bp += ls;
 		}
 	}
+	
+	// Hmmm...
+	void DrawPatch4x6(int bp, int be, int bl, int ls, array<int> pixels, PS_DPalette pallete)
+	{
+		int pp, colorIndex, color;
+		colorIndex = pixels[pp]; if (colorIndex != 256){color = pallete.m_aColors[colorIndex];PS_DEddsTexture.m_aPixels[bp] = color;} bp++; pp++;
+		colorIndex = pixels[pp]; if (colorIndex != 256){color = pallete.m_aColors[colorIndex];PS_DEddsTexture.m_aPixels[bp] = color;} bp++; pp++;
+		colorIndex = pixels[pp]; if (colorIndex != 256){color = pallete.m_aColors[colorIndex];PS_DEddsTexture.m_aPixels[bp] = color;} bp++; pp++;
+		colorIndex = pixels[pp]; if (colorIndex != 256){color = pallete.m_aColors[colorIndex];PS_DEddsTexture.m_aPixels[bp] = color;} bp++; pp++;
+		bl += PS_DConst.SCREEN_WIDTH; bp += ls;
+		colorIndex = pixels[pp]; if (colorIndex != 256){color = pallete.m_aColors[colorIndex];PS_DEddsTexture.m_aPixels[bp] = color;} bp++; pp++;
+		colorIndex = pixels[pp]; if (colorIndex != 256){color = pallete.m_aColors[colorIndex];PS_DEddsTexture.m_aPixels[bp] = color;} bp++; pp++;
+		colorIndex = pixels[pp]; if (colorIndex != 256){color = pallete.m_aColors[colorIndex];PS_DEddsTexture.m_aPixels[bp] = color;} bp++; pp++;
+		colorIndex = pixels[pp]; if (colorIndex != 256){color = pallete.m_aColors[colorIndex];PS_DEddsTexture.m_aPixels[bp] = color;} bp++; pp++;
+		bl += PS_DConst.SCREEN_WIDTH; bp += ls;
+		colorIndex = pixels[pp]; if (colorIndex != 256){color = pallete.m_aColors[colorIndex];PS_DEddsTexture.m_aPixels[bp] = color;} bp++; pp++;
+		colorIndex = pixels[pp]; if (colorIndex != 256){color = pallete.m_aColors[colorIndex];PS_DEddsTexture.m_aPixels[bp] = color;} bp++; pp++;
+		colorIndex = pixels[pp]; if (colorIndex != 256){color = pallete.m_aColors[colorIndex];PS_DEddsTexture.m_aPixels[bp] = color;} bp++; pp++;
+		colorIndex = pixels[pp]; if (colorIndex != 256){color = pallete.m_aColors[colorIndex];PS_DEddsTexture.m_aPixels[bp] = color;} bp++; pp++;
+		bl += PS_DConst.SCREEN_WIDTH; bp += ls;
+		colorIndex = pixels[pp]; if (colorIndex != 256){color = pallete.m_aColors[colorIndex];PS_DEddsTexture.m_aPixels[bp] = color;} bp++; pp++;
+		colorIndex = pixels[pp]; if (colorIndex != 256){color = pallete.m_aColors[colorIndex];PS_DEddsTexture.m_aPixels[bp] = color;} bp++; pp++;
+		colorIndex = pixels[pp]; if (colorIndex != 256){color = pallete.m_aColors[colorIndex];PS_DEddsTexture.m_aPixels[bp] = color;} bp++; pp++;
+		colorIndex = pixels[pp]; if (colorIndex != 256){color = pallete.m_aColors[colorIndex];PS_DEddsTexture.m_aPixels[bp] = color;} bp++; pp++;
+		bl += PS_DConst.SCREEN_WIDTH; bp += ls;
+		colorIndex = pixels[pp]; if (colorIndex != 256){color = pallete.m_aColors[colorIndex];PS_DEddsTexture.m_aPixels[bp] = color;} bp++; pp++;
+		colorIndex = pixels[pp]; if (colorIndex != 256){color = pallete.m_aColors[colorIndex];PS_DEddsTexture.m_aPixels[bp] = color;} bp++; pp++;
+		colorIndex = pixels[pp]; if (colorIndex != 256){color = pallete.m_aColors[colorIndex];PS_DEddsTexture.m_aPixels[bp] = color;} bp++; pp++;
+		colorIndex = pixels[pp]; if (colorIndex != 256){color = pallete.m_aColors[colorIndex];PS_DEddsTexture.m_aPixels[bp] = color;} bp++; pp++;
+		bl += PS_DConst.SCREEN_WIDTH; bp += ls;
+		colorIndex = pixels[pp]; if (colorIndex != 256){color = pallete.m_aColors[colorIndex];PS_DEddsTexture.m_aPixels[bp] = color;} bp++; pp++;
+		colorIndex = pixels[pp]; if (colorIndex != 256){color = pallete.m_aColors[colorIndex];PS_DEddsTexture.m_aPixels[bp] = color;} bp++; pp++;
+		colorIndex = pixels[pp]; if (colorIndex != 256){color = pallete.m_aColors[colorIndex];PS_DEddsTexture.m_aPixels[bp] = color;} bp++; pp++;
+		colorIndex = pixels[pp]; if (colorIndex != 256){color = pallete.m_aColors[colorIndex];PS_DEddsTexture.m_aPixels[bp] = color;} bp++; pp++;
+	}
 }
-
-
 
 
 

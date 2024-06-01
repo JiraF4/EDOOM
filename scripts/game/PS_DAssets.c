@@ -67,28 +67,27 @@ class PS_DAssets
 			}
 		}
 		
-		/*
-		PS_DColorMap colorMap = m_aColorMaps[0];
-		for (int i = 0; i < 34; i++)
+		InitPatches();
+		InitSprites();
+	}
+	
+	void SwitchPallet(bool sRGB)
+	{
+		foreach (PS_DPalette pallete : m_aPalletes)
 		{
-			array<ref PS_DPalette> coloredPalletes = new array<ref PS_DPalette>();
-			foreach (PS_DPalette pallete : m_aPalletes)
-			{
-				PS_DPalette remapedPallete = new PS_DPalette();
-				
-				for (int p = 0; p < 256; p++)
-				{
-					int color = colorMap.m_aColors[p + i * 256];
-					remapedPallete.m_aColors[p] = pallete.m_aColors[color];
-				}
-				
-				coloredPalletes.Insert(remapedPallete);
-			}
-			m_aColoredPalletes.Insert(coloredPalletes);
+			if (sRGB)
+				StaticArray.Copy(pallete.m_aColors, pallete.m_aColorsSRGB);
+			else
+				StaticArray.Copy(pallete.m_aColors, pallete.m_aColorsLinear);
 		}
-		*/
 		
+		BakePallets();
+	}
+	
+	void BakePallets()
+	{
 		// Prebake every pallet variant
+		m_aColoredPalletes = {};
 		PS_DColorMap colorMap = m_aColorMaps[0];
 		foreach (PS_DPalette pallete : m_aPalletes)
 		{
@@ -110,9 +109,6 @@ class PS_DAssets
 			}
 			m_aColoredPalletes.Insert(coloredPalletes);
 		}
-		
-		InitPatches();
-		InitSprites();
 	}
 	
 	//------------------------------------------------------------------------------------------------
@@ -135,7 +131,7 @@ class PS_DAssets
 			for (int y = ys; y < h; y++)
 			{
 				int pixelIndex = x + y * PS_DConst.SCREEN_WIDTH;
-				PS_EddsTextureCanvasComponent.m_aPixels[pixelIndex] = color;
+				PS_DEddsTexture.m_aPixels[pixelIndex] = color;
 			}
 		}
 	}
@@ -178,8 +174,8 @@ class PS_DAssets
 				{
 					int color = pallete.m_aColors[colorIndex];
 					int pixelIndex = x + y * PS_DConst.SCREEN_WIDTH;
-					if (pixelIndex < PS_EddsTextureCanvasComponent.SCREEN_SIZE)
-						PS_EddsTextureCanvasComponent.m_aPixels[pixelIndex] = color;
+					if (pixelIndex < PS_DEddsTexture.SCREEN_SIZE)
+						PS_DEddsTexture.m_aPixels[pixelIndex] = color;
 				}
 				yp++;
 			}
@@ -338,7 +334,13 @@ class PS_DAssets
 			wadFile.Read(g, 1);
 			wadFile.Read(b, 1);
 			int rgba = (a << 24) | (r << 16) | (g << 8) | (b << 0);
+			
 			palette.m_aColors[i] = rgba;
+			palette.m_aColorsSRGB[i] = rgba;
+			
+			Color color = Color.FromInt(rgba);
+			color.SRGBToLinear();
+			palette.m_aColorsLinear[i] = color.PackToInt();
 		}
 		m_aPalletes.Insert(palette);
 	}
@@ -529,6 +531,7 @@ class PS_DTextureFlat
 {
 	string m_sName;
 	ref PS_DTextureFlatPixels m_Pixels = new PS_DTextureFlatPixels();;
+	
 }
 
 class PS_DTextureFlatPixels
@@ -574,6 +577,8 @@ class PS_DPatchPixels
 class PS_DPalette
 {
 	int m_aColors[256];
+	int m_aColorsSRGB[256];
+	int m_aColorsLinear[256];
 }
 
 class PS_DColorMap

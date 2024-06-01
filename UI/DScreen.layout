@@ -28,5 +28,18 @@ FrameWidgetClass {
     OffsetBottom -1200
    }
   }
+  CanvasWidgetClass "{617EEA151178B218}" {
+   Name "3DCanvas"
+   Slot FrameWidgetSlot "{614A0271C5016EBC}" {
+    PositionX 0
+    OffsetLeft 0
+    PositionY 0
+    OffsetTop 0
+    SizeX 1920
+    OffsetRight -1920
+    SizeY 1200
+    OffsetBottom -1200
+   }
+  }
  }
 }

@@ -30,7 +30,7 @@ class PS_DEndingScreen
 				int indexTexture = (x & 63) + (y & 63) * 64;
 				int indexScreen = x + y * PS_DConst.SCREEN_WIDTH;
 				int colorIndex = m_BackgroundFlat.m_Pixels.m_aPixels[indexTexture];
-				PS_EddsTextureCanvasComponent.m_aPixels[indexScreen] = m_Pallete.m_aColors[colorIndex];
+				PS_DEddsTexture.m_aPixels[indexScreen] = m_Pallete.m_aColors[colorIndex];
 			}
 		}
 	}
@@ -85,8 +85,8 @@ class PS_DEndingScreen
 				{
 					int color = pallete.m_aColors[colorIndex];
 					int pixelIndex = x + y * PS_DConst.SCREEN_WIDTH;
-					if (pixelIndex < PS_EddsTextureCanvasComponent.SCREEN_SIZE)
-						PS_EddsTextureCanvasComponent.m_aPixels[pixelIndex] = color;
+					if (pixelIndex < PS_DEddsTexture.SCREEN_SIZE)
+						PS_DEddsTexture.m_aPixels[pixelIndex] = color;
 				}
 				yp++;
 			}
@@ -103,6 +103,7 @@ class PS_DEndingScreen
 			m_iTickNum++;
 			FixedUpdate(TICK_DELAY);
 			m_fLastTickTime += TICK_DELAY;
+			m_DMain.m_DInput.ResetInput();
 		}
 	}
 	

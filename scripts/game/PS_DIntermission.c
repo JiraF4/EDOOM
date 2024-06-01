@@ -227,6 +227,7 @@ class PS_DIntermission
 			m_iTickNum++;
 			FixedUpdate(TICK_DELAY);
 			m_fLastTickTime += TICK_DELAY;
+			m_DMain.m_DInput.ResetInput();
 		}
 	}
 	
@@ -239,8 +240,8 @@ class PS_DIntermission
 		
 		// Statees skip
 		if (
-			GetGame().GetInputManager().GetActionValue("DFire") ||
-			GetGame().GetInputManager().GetActionValue("DAction")
+			m_DMain.m_DInput.m_fFire ||
+			m_DMain.m_DInput.m_fAction
 		) {
 			if (!m_bClick)
 			{
@@ -470,8 +471,8 @@ class PS_DIntermission
 				{
 					int color = pallete.m_aColors[colorIndex];
 					int pixelIndex = x + y * PS_DConst.SCREEN_WIDTH;
-					if (pixelIndex < PS_EddsTextureCanvasComponent.SCREEN_SIZE)
-						PS_EddsTextureCanvasComponent.m_aPixels[pixelIndex] = color;
+					if (pixelIndex < PS_DEddsTexture.SCREEN_SIZE)
+						PS_DEddsTexture.m_aPixels[pixelIndex] = color;
 				}
 				yp++;
 			}
