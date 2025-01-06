@@ -21,7 +21,7 @@ class PS_DInput
 	
 	void UpdateValues()
 	{
-		m_fAim = m_InputManager.GetActionValue("DAim") * 0.00005 + m_InputManager.GetActionValue("DAimGamepade") * 0.1;
+		m_fAim = m_InputManager.GetActionValue("DAim") * 0.05 + m_InputManager.GetActionValue("DAimGamepade") * 0.1;
 		m_fForward = m_InputManager.GetActionValue("DForward");
 		m_fRight = m_InputManager.GetActionValue("DRight");
 	}

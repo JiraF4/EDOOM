@@ -1,30 +1,39 @@
-GenericEntity {
- components {
-  MeshObject "{6146BDECD83AC900}" {
-   Object "{1FA59B6C4ED25DE6}system/wbdata/MaterialEditor/MaterialPlane.xob"
-   Materials {
-    MaterialAssignClass "{6146BDEC877F47DB}" {
-     SourceMaterial "DummyMaterial"
-     AssignedMaterial "{2D8295CE3922B236}EddsCanvas/EddsMat.emat"
+$grp GenericEntity {
+ {
+  components {
+   MeshObject "{6146BDECD83AC900}" {
+    Object "{1FA59B6C4ED25DE6}system/wbdata/MaterialEditor/MaterialPlane.xob"
+    Materials {
+     MaterialAssignClass "{6146BDEC877F47DB}" {
+      SourceMaterial "DummyMaterial"
+      AssignedMaterial "{2D8295CE3922B236}EddsCanvas/EddsMat.emat"
+     }
     }
    }
+   PS_DFullScreenComponent "{61551A7331BE98D1}" {
+   }
   }
-  PS_DFullScreenComponent "{61551A7331BE98D1}" {
-  }
+  coords 150.137 2.199 118.726
+  angleX 90
+  angleY -135
+  angleZ 45
+  Flags 2097155
  }
- coords 150.137 2.199 118.726
- angleX 90
- angleY -135
- angleZ 45
- Flags 2097155
+ {
+  components {
+   PS_DFullScreenComponent "{644C1DE6BE64397D}" {
+   }
+  }
+  coords 133.394 1 116.122
+ }
 }
-Vehicle APC_K17_unarmed1 : "{3B899AC9449C35F0}Prefabs/Vehicles/Wheeled/K17/APC_K17_unarmed.et" {
- coords 132.657 1 127.179
+Vehicle APC_K17_unarmed1 {
+ coords 132.303 1 123.773
 }
-VehiclePartPanel : "{427E72A620CAC670}Prefabs/Vehicles/Shared/Gauges_Ru/RHS_PMF5.0.et" {
- coords 141.451 1.72 128.616
-}
-$grp VehiclePartPanel : "{ED065341F35B9F37}Prefabs/Vehicles/Shared/Gauges_Ru/RHS_PMF5.0_K17.et" {
+$grp VehiclePartPanel {
+ {
+  coords 141.451 1.72 128.616
+ }
  {
   coords 140.365 1.354 130.305
  }

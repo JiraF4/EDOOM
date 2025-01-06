@@ -25,6 +25,9 @@ class PS_DWAD
 		ReadHeader(wadFile);
 		ReadLumps(wadFile);
 		
+		wadFile.Close();
+		wadFile = FileIO.OpenFile(wadPath, FileMode.READ);
+		
 		m_DAssets = new PS_DAssets(this);
 		SeekLump("PLAYPAL");
 		m_DAssets.ReadLump(wadFile, m_aLumps[m_iCurrentLump], PS_EDLump.PS_DPalette, 256 * 3);
@@ -32,12 +35,8 @@ class PS_DWAD
 		SeekLump("COLORMAP");
 		m_DAssets.ReadColorMap(wadFile);
 		
-		SeekLump("PNAMES");
-		PS_DLump lump = m_aLumps[m_iCurrentLump];
-		m_DAssets.ReadPatchNames(wadFile, m_aLumps[m_iCurrentLump]);
-		
 		SeekLump("TEXTURE1");
-		lump = m_aLumps[m_iCurrentLump];
+		PS_DLump lump = m_aLumps[m_iCurrentLump];
 		m_DAssets.ReadTextures(wadFile, m_aLumps[m_iCurrentLump]);
 		if (SeekLump("TEXTURE2"))
 		{
@@ -45,6 +44,37 @@ class PS_DWAD
 			m_DAssets.ReadTextures(wadFile, m_aLumps[m_iCurrentLump]);
 		}
 		
+		SeekLump("PNAMES");
+		lump = m_aLumps[m_iCurrentLump];
+		m_DAssets.ReadPatchNames(wadFile, m_aLumps[m_iCurrentLump]);
+		
+		
+		wadFile.Close();
+		wadFile = FileIO.OpenFile(wadPath, FileMode.READ);
+		SeekLump("D_INTROA"); // Interface staff, need normal way...
+		m_iCurrentLump++;
+		lump = m_aLumps[m_iCurrentLump];
+		while (lump.m_sName != "S_START")
+		{
+			m_DAssets.ReadPatch(wadFile, m_aLumps[m_iCurrentLump]);
+			m_iCurrentLump++;
+			lump = m_aLumps[m_iCurrentLump];
+		}
+		
+		wadFile.Close();
+		wadFile = FileIO.OpenFile(wadPath, FileMode.READ);
+		SeekLump("S_START");
+		m_iCurrentLump++;
+		lump = m_aLumps[m_iCurrentLump];
+		while (lump.m_sName != "S_END")
+		{
+			m_DAssets.ReadPatch(wadFile, m_aLumps[m_iCurrentLump]);
+			m_iCurrentLump++;
+			lump = m_aLumps[m_iCurrentLump];
+		}
+		
+		wadFile.Close();
+		wadFile = FileIO.OpenFile(wadPath, FileMode.READ);
 		SeekLump("P_START");
 		m_iCurrentLump++;
 		lump = m_aLumps[m_iCurrentLump];
@@ -55,31 +85,15 @@ class PS_DWAD
 			m_iCurrentLump++;
 			lump = m_aLumps[m_iCurrentLump];
 		}
-		SeekLump("S_START");
-		m_iCurrentLump++;
-		lump = m_aLumps[m_iCurrentLump];
-		while (lump.m_sName != "S_END")
-		{
-			m_DAssets.ReadPatch(wadFile, m_aLumps[m_iCurrentLump]);
-			m_iCurrentLump++;
-			lump = m_aLumps[m_iCurrentLump];
-		}
+		
+		wadFile.Close();
+		wadFile = FileIO.OpenFile(wadPath, FileMode.READ);
 		SeekLump("F_START");
 		m_iCurrentLump++;
 		lump = m_aLumps[m_iCurrentLump];
 		while (lump.m_sName != "F_END")
 		{
 			m_DAssets.ReadFlat(wadFile, m_aLumps[m_iCurrentLump]);
-			m_iCurrentLump++;
-			lump = m_aLumps[m_iCurrentLump];
-		}
-		// Interface staff, need normal way...
-		SeekLump("D_INTROA");
-		m_iCurrentLump++;
-		lump = m_aLumps[m_iCurrentLump];
-		while (lump.m_sName != "S_START")
-		{
-			m_DAssets.ReadPatch(wadFile, m_aLumps[m_iCurrentLump]);
 			m_iCurrentLump++;
 			lump = m_aLumps[m_iCurrentLump];
 		}
@@ -96,35 +110,26 @@ class PS_DWAD
 		
 		m_dMap = new PS_DMap(this, m_DMain, mapName);
 		SeekLump(mapName);
-		SeekLump("VERTEXES");
-		m_dMap.ReadLump(wadFile, m_aLumps[m_iCurrentLump], PS_EDLump.PS_DVertex, 4);
-		SeekLump(mapName);
-		SeekLump("LINEDEFS");
-		m_dMap.ReadLump(wadFile, m_aLumps[m_iCurrentLump], PS_EDLump.PS_DLinedef, 14);
-		SeekLump(mapName);
 		SeekLump("THINGS");
 		m_dMap.ReadLump(wadFile, m_aLumps[m_iCurrentLump], PS_EDLump.PS_DThing, 10);
-		SeekLump(mapName);
-		SeekLump("SEGS");
-		m_dMap.ReadLump(wadFile, m_aLumps[m_iCurrentLump], PS_EDLump.PS_DSeg, 12);
-		SeekLump(mapName);
-		SeekLump("SSECTORS");
-		m_dMap.ReadLump(wadFile, m_aLumps[m_iCurrentLump], PS_EDLump.PS_DSubSector, 4);
-		SeekLump(mapName);
-		SeekLump("NODES");
-		m_dMap.ReadLump(wadFile, m_aLumps[m_iCurrentLump], PS_EDLump.PS_DNode, 28);
-		SeekLump(mapName);
-		SeekLump("SECTORS");
-		m_dMap.ReadLump(wadFile, m_aLumps[m_iCurrentLump], PS_EDLump.PS_DSector, 26);
-		SeekLump(mapName);
+		SeekLump("LINEDEFS");
+		m_dMap.ReadLump(wadFile, m_aLumps[m_iCurrentLump], PS_EDLump.PS_DLinedef, 14);
 		SeekLump("SIDEDEFS");
 		m_dMap.ReadLump(wadFile, m_aLumps[m_iCurrentLump], PS_EDLump.PS_DSideDef, 30);
-		SeekLump(mapName);
-		SeekLump("BLOCKMAP");
-		m_dMap.ReadBlockMap(wadFile, m_aLumps[m_iCurrentLump]);
-		SeekLump(mapName);
+		SeekLump("VERTEXES");
+		m_dMap.ReadLump(wadFile, m_aLumps[m_iCurrentLump], PS_EDLump.PS_DVertex, 4);
+		SeekLump("SEGS");
+		m_dMap.ReadLump(wadFile, m_aLumps[m_iCurrentLump], PS_EDLump.PS_DSeg, 12);
+		SeekLump("SSECTORS");
+		m_dMap.ReadLump(wadFile, m_aLumps[m_iCurrentLump], PS_EDLump.PS_DSubSector, 4);
+		SeekLump("NODES");
+		m_dMap.ReadLump(wadFile, m_aLumps[m_iCurrentLump], PS_EDLump.PS_DNode, 28);
+		SeekLump("SECTORS");
+		m_dMap.ReadLump(wadFile, m_aLumps[m_iCurrentLump], PS_EDLump.PS_DSector, 26);
 		SeekLump("REJECT");
 		m_dMap.ReadReject(wadFile, m_aLumps[m_iCurrentLump]);
+		SeekLump("BLOCKMAP");
+		m_dMap.ReadBlockMap(wadFile, m_aLumps[m_iCurrentLump]);
 		m_dMap.Init();
 		
 		wadFile.Close();
@@ -149,7 +154,7 @@ class PS_DWAD
 				i = 0;
 			if (c > m_iNumLumps)
 			{
-				Print("INVALIDE LUMP");
+				Print("INVALIDE LUMP - " + lumpName);
 				return false;
 			}
 		}

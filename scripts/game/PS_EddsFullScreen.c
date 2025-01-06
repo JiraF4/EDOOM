@@ -7,7 +7,6 @@ class PS_DFullScreenComponentClass : ScriptComponentClass
 class PS_DFullScreenComponent : ScriptComponent
 {
 	ref PS_DEddsTexture m_DEddsTexture;
-	
 	Widget m_wDRoot;
 	
 	//------------------------------------------------------------------------------------------------
@@ -33,16 +32,6 @@ class PS_DFullScreenComponent : ScriptComponent
 		
 		m_DEddsTexture = new PS_DEddsTexture(m_wDRoot);
 		m_DEddsTexture.EOnInit(owner);
-		for (int i = 0; i < PS_DConst.SCREEN_WIDTH; i++)
-			m_DEddsTexture.m_DMain.m_aPixelsOffset[i] = PS_DConst.SCREEN_HEIGHT;
-		
-		m_DEddsTexture.m_DMain.m_iDifficulty = 2;
-		m_DEddsTexture.m_DMain.m_iCurrentLevel = 0;
-		m_DEddsTexture.m_DMain.LoadLevel("E1M1");
-		m_DEddsTexture.m_DMain.m_CurrentGameState = PS_DGameState.GS_LEVEL;
-		for (int i = 0; i < PS_DConst.SCREEN_WIDTH; i++)
-			m_DEddsTexture.m_DMain.m_aPixelsOffset[i] = PS_DConst.SCREEN_HEIGHT;
-		
 		/*
 		m_DEddsTexture.m_DMain.m_EntityPlayer.m_iHealth = 999999;
 		

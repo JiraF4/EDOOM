@@ -183,7 +183,9 @@ class PS_DInterface
 	}
 	
 	void UpdateSTBAR()
-	{
+	{	
+		if (!m_CurrentPallete)
+			return;
 		PS_DPalette pallete = m_CurrentPallete;
 		for (int i = 0; i < STBAR_SIZE; i++)
 		{

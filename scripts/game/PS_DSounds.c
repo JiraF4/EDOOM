@@ -162,7 +162,7 @@ class PS_DMusicEffect
 		else
 			m_bRepeat = false;
 		AudioSystem.TerminateSound(m_MusicAudioHandle);
-		string filePath = "$profile:DE/Music/D_" + m_sName + ".wav";
+		string filePath = PS_DMain.s_ResourcesPath + "Music/D_" + m_sName + ".wav";
 		m_MusicAudioHandle = AudioSystem.PlaySound(filePath);
 	}
 }
@@ -191,14 +191,15 @@ class PS_DSoundEffect
 	)
 	{
 		m_sName = name;
-		m_sSoundFile = "$profile:DE/Sounds/DS" + name + ".wav";
+		m_sSoundFile = PS_DMain.s_ResourcesPath + "Sounds/DS" + name + ".wav";
 		m_iSingularity = singularity;
 	}
 	
 	static void PlaySound(PS_EDSoundFX sfx, vector position)
 	{
-		vector vectorToPlayer = s_Player.m_vPosition - position;
-		vectorToPlayer = PS_Math2D.Rotate(vectorToPlayer, -s_Player.m_fAngle);
+		//vector vectorToPlayer = s_Player.m_vPosition - position;
+		//vectorToPlayer = PS_Math2D.Rotate(vectorToPlayer, -s_Player.m_fAngle);
+		vector vectorToPlayer = "0 0 0";
 		
 		PS_DSoundEffect soundEffect = PS_DSoundEffect.SOUND_EFFECTS[sfx];
 		soundEffect.Play(vectorToPlayer);

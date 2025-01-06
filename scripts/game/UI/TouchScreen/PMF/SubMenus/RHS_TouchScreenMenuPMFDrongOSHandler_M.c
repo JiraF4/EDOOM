@@ -1,3 +1,4 @@
+/*
 modded class RHS_TouchScreenMenuPMFDrongOSHandler
 {
 	protected FrameWidget m_wDFrame;
@@ -66,3 +67,4 @@ modded class RHS_TouchScreenMenuPMFDrongOSHandler
 		m_RpcManager.AskAuthorityToSyncPMFCurrentDrongOSMenu(m_VehiclePMFScreenComponent, 0)
 	}
 }
+*/

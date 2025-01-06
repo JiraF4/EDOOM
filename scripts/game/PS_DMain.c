@@ -2,7 +2,9 @@
 class PS_DMain
 {
 	static PS_DMain s_DMain; // FIXME: remove static reference
-	
+
+	static string s_ResourcesPath = "$profile:DE/";
+		
 	// Systems
 	ref PS_DWAD m_DWAD;             // WAD file (Game resources)
 	ref PS_DMap m_DMap;             // Current loaded map
@@ -294,16 +296,28 @@ class PS_DMain
 	{
 		m_RandomGenerator = new RandomGenerator();
 		
+		FileIO.MakeDirectory("$profile:DE");
+		FileIO.MakeDirectory("$profile:DE/Saves");
+		FileIO.MakeDirectory("$profile:EddsCanvas");
+		
 		m_DInput = new PS_DInput();
 		m_DInput.Init();
 		
 		s_DMain = this;
 		
+		
 		// Preload all crazy state tables
 		PS_DInfo.Init();
 		PS_DInfo.Init3(); // Too big for enf
 		
-		m_DWAD = PS_DWAD(this, "$profile:DE/doom1.wad");
+		if (FileIO.FileExists("$EDOOMAssets:doom1.wad.vhcsurf"))
+		{
+			s_ResourcesPath = "$EDOOMAssets:";
+			m_DWAD = PS_DWAD(this, PS_DMain.s_ResourcesPath + "doom1.wad.vhcsurf");
+		}
+		else
+			m_DWAD = PS_DWAD(this, PS_DMain.s_ResourcesPath + "doom1.wad");
+		
 		PS_DWeaponInfo.Init(m_DWAD.m_DAssets);
 		m_DRenderer = PS_DRenderer(this, null, m_DWAD.m_DAssets);
 		PS_DAnimatedTexture.Init(m_DWAD.m_DAssets);

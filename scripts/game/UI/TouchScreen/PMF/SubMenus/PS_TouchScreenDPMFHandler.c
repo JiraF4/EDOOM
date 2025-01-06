@@ -1,3 +1,4 @@
+/*
 class PS_TouchScreenDPMFHandler : RHS_TouchScreenMenuPMFSubHandler
 {
 	protected RHS_VehiclePMFScreenComponent m_VehiclePMFScreenComponent;
@@ -53,3 +54,4 @@ class PS_TouchScreenDPMFHandler : RHS_TouchScreenMenuPMFSubHandler
 		}
 	}
 }
+*/

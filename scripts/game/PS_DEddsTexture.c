@@ -262,10 +262,10 @@ class PS_DEddsTexture
 				LineDrawCommand lineDrawCommand = new LineDrawCommand();
 				
 				lineDrawCommand.m_Vertices = {
-					pixelWidth * x, pixelHeight * y + pixelWidth/2,
+					pixelWidth * x, pixelHeight * y + pixelWidth/2 * 2,
 					pixelWidth * x + pixelWidth, pixelHeight * y + pixelWidth/2
 				};
-				lineDrawCommand.m_fWidth = pixelWidth;
+				lineDrawCommand.m_fWidth = pixelWidth * 2;
 				lineDrawCommand.m_iColor = Color.RED;
 				
 				m_aLineCommands.Insert(lineDrawCommand);

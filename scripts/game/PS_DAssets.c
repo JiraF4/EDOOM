@@ -329,6 +329,8 @@ class PS_DAssets
 		PS_DPalette palette = new PS_DPalette();
 		for (int i = 0; i < 256; i++)
 		{
+			Print(wadFile.GetPos());
+			
 			int r, g, b, a = 255;
 			wadFile.Read(r, 1);
 			wadFile.Read(g, 1);
@@ -427,7 +429,7 @@ class PS_DAssets
 				wadFile.Read(topDelta, 1);
 			}
 		}
-		
+
 		//Print(lump.m_sName);
 		m_mPatches.Insert(lump.m_sName.Trim(), patch);
 	}
