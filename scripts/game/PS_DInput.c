@@ -102,33 +102,63 @@ class PS_DInput
 	}
 	
 	void DAction()
+	{
 		m_fAction = 1;
+	}
 	void DFire()
+	{
 		m_fFire = 1;
+	}
 	void DW1()
+	{
 		m_iWeaponSlot = 0;
+	}
 	void DW2()
+	{
 		m_iWeaponSlot = 1;
+	}
 	void DW3()
+	{
 		m_iWeaponSlot = 2;
+	}
 	void DW4()
+	{
 		m_iWeaponSlot = 3;
+	}
 	void DW5()
+	{
 		m_iWeaponSlot = 4;
+	}
 	void DW6()
+	{
 		m_iWeaponSlot = 5;
+	}
 	void DW7()
+	{
 		m_iWeaponSlot = 6;
+	}
 	void DMap()
+	{
 		m_fMap = 1;
+	}
 	void DESC()
+	{
 		m_fESC = 1;
+	}
 	void DQS()
+	{
 		m_fQS = 1;
+	}
 	void DQL()
+	{
 		m_fQL = 1;
+	}
 	void DBACK()
+	{
 		m_fBack = 1;
+	}
 	void DENT()
+	{
 		m_fENT = 1;
+	}
 }

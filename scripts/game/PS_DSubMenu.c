@@ -177,7 +177,9 @@ class PS_DOption
 
 	void Activate();
 	string GetName()
+	{
 		return m_sName;
+	}
 
 	void PS_DOption(string name)
 	{
